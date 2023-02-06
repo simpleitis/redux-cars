@@ -1,0 +1,90 @@
+npm install @reduxjs/toolkit react-redux
+
+
+
+
+Create folder 'store' with subfolder 'slices'
+
+
+
+
+Inside 'slices' create a file 'nameSlice.js'
+import { createSlice, nanoid } from '@reduxjs/toolkit';
+
+const carsSlice = createSlice({
+    name: 'cars',
+    initialState: {
+        searchTerm: '',
+        cars: [],
+    },
+    reducers: {
+        changeSearchTerm(state, action) {
+            state.searchTerm = action.payload;
+        },
+        addCar(state, action) {
+            state.cars.push({
+                name: action.payload.name,
+                cost: action.payload.cost,
+                id: nanoid(),
+            });
+        },
+        removeCar(state, action) {
+            const updated = state.cars.filter((car) => {
+                return car.id !== action.payload;
+            });
+            state.cars = updated;
+        },
+    },
+});
+
+export const { changeSearchTerm, addCar, removeCar } = carsSlice.actions;
+export const carsReducer = carsSlice.reducer;
+
+
+
+
+
+Create 'index.js' inside 'store' directory
+import { configureStore } from '@reduxjs/toolkit';
+import {
+    carsReducer,
+    addCar,
+    removeCar,
+    changeSearchTerm,
+} from './slices/carsSlice';
+import { formReducer, changeName, changeCost } from './slices/formSlice';
+
+const store = configureStore({
+    reducer: {
+        cars: carsReducer,
+        form: formReducer,
+    },
+});
+
+export { store, changeName, changeCost, addCar, removeCar, changeSearchTerm };
+
+
+Modify 'index.js/src'
+import { Provider } from 'react-redux';
+import { store } from './store';
+...
+root.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
